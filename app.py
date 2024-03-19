@@ -1,4 +1,6 @@
 from flask import Flask
+app = Flask(__name__)
+
 from flask import request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
@@ -6,9 +8,6 @@ from linebot.models import MessageEvent, TextMessage, TextSendMessage
 import openai
 import os
 
-app = Flask(__name__)
-
-# 設置您的環境變數
 openai.api_key = os.getenv('OPENAI_API_KEY')
 line_bot_api = LineBotApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
 handler1 = WebhookHandler(os.getenv('CHANNEL_SECRET'))
@@ -28,8 +27,7 @@ def handle_message(event):
     text1 = event.message.text
     response = openai.ChatCompletion.create(
         messages=[
-            {"role": "user", "content": text1},
-            {"role": "driver", "content": ""}
+            {"role": "driver", "content": text1}  # 將 "user" 替換為 "driver"
         ],
         model="gpt-3.5-turbo-0125",
         temperature=0.5,
