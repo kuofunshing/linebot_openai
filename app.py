@@ -36,7 +36,7 @@ def handle_message(event):
     }
     response = openai.ChatCompletion.create(
         messages=[
-            {"role": "user", "content": text1},
+            #{"role": "user", "content": text1},
             {"role": "system", "content": user_profile}  # 將用戶資料添加到請求中
         ],
         model="gpt-3.5-turbo-0125",
