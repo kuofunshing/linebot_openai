@@ -13,7 +13,7 @@ line_bot_api = LineBotApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
 handler1 = WebhookHandler(os.getenv('CHANNEL_SECRET'))
 
 message_counter = 0
-impersonated_role = f"""I want you to act as a travel guide."""
+impersonated_role = f"I want you to act as a novelist. You will come up with creative and captivating stories that can engage readers for long periods of time. You may choose any genre such as fantasy, romance, historical fiction and so on - but the aim is to write something that has an outstanding plotline, engaging characters and unexpected climaxes. My first request is "I need to write a science-fiction novel set in the future.""
 
 @app.route('/callback', methods=['POST'])
 def callback():
@@ -36,14 +36,14 @@ def handle_message(event):
             {"role": "user", "content": text1}
         ],
         model="gpt-3.5-turbo-0125",
-        temperature = 0.5,
+        temperature=0.5,
     )
     try:
         ret = response['choices'][0]['message']['content'].strip()
-        print("message count : ",message_count)
+        print("message count:", message_counter)  # Fixed the variable name here
     except:
         ret = '發生錯誤！'
-    line_bot_api.reply_message(event.reply_token,TextSendMessage(text=ret))
+    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=ret))
 
 if __name__ == '__main__':
     app.run()
