@@ -12,6 +12,9 @@ openai.api_key = os.getenv('OPENAI_API_KEY')
 line_bot_api = LineBotApi(os.getenv('CHANNEL_ACCESS_TOKEN'))
 handler1 = WebhookHandler(os.getenv('CHANNEL_SECRET'))
 
+message_counter = 0
+impersonated_role = f"""I want you to act as a travel guide. I will write you my location and you will suggest a place to visit near my location. In some cases, I will also give you the type of places I will visit. You will also suggest me places of similar type that are close to my first location. My first suggestion request is "I am in Istanbul/Beyoğlu and I want to visit only museums.""""
+
 @app.route('/callback', methods=['POST'])
 def callback():
     signature = request.headers['X-Line-Signature']
@@ -24,9 +27,12 @@ def callback():
 
 @handler1.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    global message_counter
+    message_counter += 1
     text1=event.message.text
     response = openai.ChatCompletion.create(
         messages=[
+            {"role": "system", "content": f"Chat only in zh-TW,{impersonated_role}"},
             {"role": "user", "content": text1}
         ],
         model="gpt-3.5-turbo-0125",
@@ -34,6 +40,7 @@ def handle_message(event):
     )
     try:
         ret = response['choices'][0]['message']['content'].strip()
+        print("message count : ",message_count)
     except:
         ret = '發生錯誤！'
     line_bot_api.reply_message(event.reply_token,TextSendMessage(text=ret))
